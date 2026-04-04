@@ -4,6 +4,7 @@ import path from "node:path";
 import mime from "mime-types";
 
 const rootDir = process.cwd();
+const basePath = `/${path.basename(rootDir)}`;
 const port = Number(process.env.PORT || 3000);
 const badgeOverride = `
 <style>
@@ -59,28 +60,48 @@ async function findExistingPath(urlPath) {
   return null;
 }
 
+function stripBasePath(requestUrl) {
+  if (requestUrl === basePath || requestUrl === `${basePath}/`) {
+    return "/";
+  }
+
+  if (requestUrl.startsWith(`${basePath}/`)) {
+    return requestUrl.slice(basePath.length) || "/";
+  }
+
+  return requestUrl;
+}
+
 const server = http.createServer(async (req, res) => {
   const requestUrl = req.url || "/";
 
   if (requestUrl === "/") {
-    res.writeHead(302, { location: "/paris" });
+    res.writeHead(302, { location: `${basePath}/paris` });
     res.end();
     return;
   }
 
-  if (requestUrl.startsWith("/.wf_graphql/csrf")) {
+  const normalizedUrl = stripBasePath(requestUrl);
+
+  if (normalizedUrl === "/") {
+    res.writeHead(302, { location: `${basePath}/paris` });
+    res.end();
+    return;
+  }
+
+  if (normalizedUrl.startsWith("/.wf_graphql/csrf")) {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({ csrf: "local" }));
     return;
   }
 
-  if (requestUrl.startsWith("/.wf_graphql")) {
+  if (normalizedUrl.startsWith("/.wf_graphql")) {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({ data: {} }));
     return;
   }
 
-  const filePath = await findExistingPath(requestUrl);
+  const filePath = await findExistingPath(normalizedUrl);
   if (!filePath) {
     res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
     res.end("Not found");
