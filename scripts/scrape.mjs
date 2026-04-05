@@ -105,7 +105,7 @@ function publicUrlToFilePath(publicPath) {
 }
 
 function shouldVisitPage(url) {
-  return url.host === siteRoot.host && (url.pathname === "/paris" || url.pathname.startsWith("/paris/")) && !hasFileExtension(url.pathname);
+  return url.host === siteRoot.host && (url.pathname === "/city" || url.pathname.startsWith("/city/")) && !hasFileExtension(url.pathname);
 }
 
 function toAbsoluteUrl(rawValue, baseUrl) {
@@ -234,7 +234,7 @@ function shouldDownloadUrl(url) {
     return false;
   }
 
-  if (url.host === siteRoot.host && !hasFileExtension(url.pathname) && !url.pathname.startsWith("/paris")) {
+  if (url.host === siteRoot.host && !hasFileExtension(url.pathname) && !url.pathname.startsWith("/city")) {
     return false;
   }
 
@@ -376,7 +376,7 @@ async function rewriteHtml(html, pageUrl) {
 
     if (shouldVisitPage(absoluteUrl)) {
       pageQueue.push(absoluteUrl.href);
-      const localHref = absoluteUrl.pathname === "/paris" ? "/paris" : absoluteUrl.pathname.replace(/\/$/, "");
+      const localHref = absoluteUrl.pathname === "/city" ? "/city" : absoluteUrl.pathname.replace(/\/$/, "");
       $(element).attr("href", absoluteUrl.search ? `${localHref}${absoluteUrl.search}` : localHref);
     }
   });

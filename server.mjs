@@ -75,19 +75,8 @@ function stripBasePath(requestUrl) {
 const server = http.createServer(async (req, res) => {
   const requestUrl = req.url || "/";
 
-  if (requestUrl === "/") {
-    res.writeHead(302, { location: `${basePath}/paris` });
-    res.end();
-    return;
-  }
-
+  // Strip /city prefix if present (HTML references use /city/assets/...)
   const normalizedUrl = stripBasePath(requestUrl);
-
-  if (normalizedUrl === "/") {
-    res.writeHead(302, { location: `${basePath}/paris` });
-    res.end();
-    return;
-  }
 
   if (normalizedUrl.startsWith("/.wf_graphql/csrf")) {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
