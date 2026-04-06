@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const outputDir = path.join(repoRoot, "cloudflare-dist");
 const excludedNames = new Set([".git", "node_modules", "cloudflare-dist"]);
+const excludedRelativePrefixes = ["assets/nura-media/videos", "scripts"];
 const textExtensions = new Set([".html", ".css", ".js", ".json", ".xml", ".txt", ".svg"]);
 
 async function rmSafe(targetPath) {
@@ -32,6 +33,11 @@ async function copyTree(sourceDir, targetDir) {
 
     const sourcePath = path.join(sourceDir, entry.name);
     const targetPath = path.join(targetDir, entry.name);
+    const relativeSourcePath = path.relative(repoRoot, sourcePath).split(path.sep).join("/");
+
+    if (excludedRelativePrefixes.some((prefix) => relativeSourcePath === prefix || relativeSourcePath.startsWith(`${prefix}/`))) {
+      continue;
+    }
 
     if (entry.isDirectory()) {
       await fs.mkdir(targetPath, { recursive: true });

@@ -95,31 +95,10 @@ h6,
   color: var(--nura-gold);
 }
 
-#nura-loader {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle at top, rgba(200, 154, 98, 0.18), transparent 36%),
-    linear-gradient(180deg, #090707 0%, #16100d 100%);
-  color: var(--nura-cream);
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  animation: nura-loader-exit 0.65s ease 4.8s forwards;
-}
-
-.nura-loading-mark,
 .nura-transition-mark {
   font-family: var(--nura-serif) !important;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-}
-
-.nura-loading-mark {
-  font-size: clamp(1.6rem, 6vw, 4rem);
 }
 
 .nura-transition-mark {
@@ -150,12 +129,4 @@ h6,
 
 .info_pill {
   margin-right: 0 !important;
-}
-
-@keyframes nura-loader-exit {
-  to {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
 }

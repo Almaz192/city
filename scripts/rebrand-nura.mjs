@@ -501,87 +501,46 @@ function updateExperiencePrices($) {
   });
 }
 
-function installLoader($) {
-  ensureHeadMarkup(
-    $,
-    "#nura-loader-boot",
-    `<script id="nura-loader-boot">document.documentElement.classList.add("nura-is-loading");</script>`
-  );
+function replaceVideosWithImages($, relativePath) {
+  $("video").each((index, el) => {
+    const replacementSrc = remoteImages[(index + relativePath.length) % remoteImages.length];
+    const img = $("<img>");
 
-  ensureBodyMarkup(
-    $,
-    "#nura-loader",
-    `<div id="nura-loader" aria-live="polite" aria-label="Нура загружается"><div class="nura-loading-mark">НУРА</div></div>`
-  );
-
-  ensureBodyMarkup(
-    $,
-    "#nura-loader-script",
-    `<script id="nura-loader-script">
-(() => {
-  const root = document.documentElement;
-  const finish = () => {
-    if (!root.classList.contains("nura-is-loading")) return;
-    root.classList.remove("nura-is-loading");
-    root.classList.add("nura-is-ready");
-  };
-
-  const waitForImage = (img) => {
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => resolve();
-      img.addEventListener("load", done, { once: true });
-      img.addEventListener("error", done, { once: true });
+    Object.entries(el.attribs || {}).forEach(([key, value]) => {
+      if (["src", "autoplay", "loop", "muted", "playsinline", "poster", "preload"].includes(key)) {
+        return;
+      }
+      img.attr(key, value);
     });
-  };
 
-  const waitForVideo = (video) => {
-    if (video.readyState >= 2) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => resolve();
-      video.addEventListener("loadeddata", done, { once: true });
-      video.addEventListener("canplay", done, { once: true });
-      video.addEventListener("error", done, { once: true });
-    });
-  };
+    const existingClasses = ($(el).attr("class") || "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .filter((className) => className !== "g_visual_video");
 
-  const waitForMedia = () => {
-    const images = Array.from(document.images);
-    const videos = Array.from(document.querySelectorAll("video"));
-    return [
-      ...images.map(waitForImage),
-      ...videos.map(waitForVideo),
-      document.fonts ? document.fonts.ready.catch(() => undefined) : Promise.resolve(),
-    ];
-  };
+    img.attr("src", replacementSrc);
+    img.attr("alt", brandName);
+    img.attr("decoding", "async");
+    img.attr("loading", index === 0 ? "eager" : "lazy");
+    if (index === 0) {
+      img.attr("fetchpriority", "high");
+    }
 
-  const start = () => {
-    const tasks = waitForMedia();
-    window.setTimeout(finish, 4500);
-    Promise.allSettled(tasks).then(() => {
-      window.requestAnimationFrame(finish);
-    });
-  };
+    const finalClasses = new Set([...existingClasses, "g_visual_img"]);
+    img.attr("class", [...finalClasses].join(" "));
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  } else {
-    start();
-  }
-})();
-</script>`,
-    "append"
-  );
+    $(el).replaceWith(img);
+  });
 }
 
 function applyCommonDomChanges($) {
   $("html").attr("lang", "ru");
+  $("#nura-loader, #nura-loader-script, #nura-loader-boot").remove();
 
   ensureHeadLink($, 'link[href*="fonts.googleapis.com/css2?family=Manrope"]', `<link rel="preconnect" href="https://fonts.googleapis.com">`);
   ensureHeadLink($, 'link[href*="fonts.gstatic.com"]', `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`);
   ensureHeadLink($, 'link[href*="fonts.googleapis.com/css2?family=Manrope"]', `<link href="${fontsHref}" rel="stylesheet">`);
   ensureHeadLink($, `link[href="${overrideHref}"]`, `<link href="${overrideHref}" rel="stylesheet" type="text/css">`);
-  installLoader($);
 
   $('link[rel="shortcut icon"], link[rel="apple-touch-icon"]').attr("href", faviconHref);
 
@@ -831,6 +790,7 @@ for (const file of htmlFiles) {
   const $ = cheerio.load(rawContents.get(file), { decodeEntities: false });
 
   applyCommonDomChanges($);
+  replaceVideosWithImages($, relativePath);
   replaceTextAndAttrs($.root()[0], commonReplacements);
 
   if (relativePath === "index.html") {
@@ -850,10 +810,6 @@ for (const file of htmlFiles) {
     if (!src) {
       $(el).attr("src", remoteImages[index % remoteImages.length]);
     }
-  });
-
-  $("video").each((index, el) => {
-    $(el).attr("src", localVideos[index % localVideos.length]);
   });
 
   let html = $.html();

@@ -42,7 +42,7 @@
 <link rel="stylesheet" href="/assets/cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.css">
 
 <!-- Finsweet Cookie Consent -->
-<script src="/assets/cdn.prod.website-files.com/684fc56fc7e02f3dad4a6138/66ba5a08efe71070f98dd10a/693fdb88c8ca28d3fe34ba79/kb3nhpjq-1.1.1.js" type="text/javascript"></script>
+<script src="/assets/cdn.prod.website-files.com/684fc56fc7e02f3dad4a6138%2F66ba5a08efe71070f98dd10a%2F693fdb88c8ca28d3fe34ba79%2Fkb3nhpjq-1.1.1.js" type="text/javascript"></script>
 <style id="codex-static-badge-hide">
 .buy-badge,
 .w-webflow-badge,
@@ -68,7 +68,7 @@ a[href*="webflow.com"].w-webflow-badge {
   window.addEventListener("load", removeBadges);
   new MutationObserver(removeBadges).observe(document.documentElement, { childList: true, subtree: true });
 })();
-</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Prata&amp;display=swap" rel="stylesheet"><link href="/assets/nura-media/brand/nura-overrides.css" rel="stylesheet" type="text/css"><script id="nura-loader-boot">document.documentElement.classList.add("nura-is-loading");</script></head><body><div id="nura-loader" aria-live="polite" aria-label="Нура загружается"><div class="nura-loading-mark">НУРА</div></div><div class="page_wrap"><div class="page_code_wrap u-theme-dark"><div class="page_code_base w-embed"><style>
+</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Prata&amp;display=swap" rel="stylesheet"><link href="/assets/nura-media/brand/nura-overrides.css" rel="stylesheet" type="text/css"></head><body><div class="page_wrap"><div class="page_code_wrap u-theme-dark"><div class="page_code_base w-embed"><style>
 :root {
   --grid-breakout: [full-start] minmax(0, 1fr) [content-start] repeat(var(--site--column-count), minmax(0, var(--site--column-width))) [content-end] minmax(0, 1fr) [full-end];
   --grid-breakout-single: [full-start] minmax(0, 1fr) [content-start] minmax(0, var(--container--main)) [content-end] minmax(0, 1fr) [full-end];
@@ -517,60 +517,4 @@ body { overscroll-behavior: none; }
 
 <!--🤙 https://slater.app/15644.js-->
 <script>document.addEventListener("DOMContentLoaded", function() {function loadNuraScript(e){let t=document.createElement("script");t.setAttribute("src",e),t.setAttribute("type","module"),document.body.appendChild(t),t.addEventListener("load",()=>{console.log("Slater loaded NŪRA.js: https://slater.app/15644.js 🤙")}),t.addEventListener("error",e=>{console.log("Error loading file",e)})}let src=window.location.host.includes("webflow.io")?"https://slater.app/15644.js":"/assets/assets.slater.app/slater/15644__v_1.0.js";loadNuraScript(src);})</script>
-<script id="nura-loader-script">
-(() => {
-  const root = document.documentElement;
-  const finish = () => {
-    if (!root.classList.contains("nura-is-loading")) return;
-    root.classList.remove("nura-is-loading");
-    root.classList.add("nura-is-ready");
-  };
-
-  const waitForImage = (img) => {
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => resolve();
-      img.addEventListener("load", done, { once: true });
-      img.addEventListener("error", done, { once: true });
-    });
-  };
-
-  const waitForVideo = (video) => {
-    if (video.readyState >= 2) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => resolve();
-      video.addEventListener("loadeddata", done, { once: true });
-      video.addEventListener("canplay", done, { once: true });
-      video.addEventListener("error", done, { once: true });
-    });
-  };
-
-  const waitForMedia = () => {
-    const images = Array.from(document.images);
-    const videos = Array.from(document.querySelectorAll("video"));
-    const tasks = [
-      ...images.map(waitForImage),
-      ...videos.map(waitForVideo),
-      document.fonts ? document.fonts.ready.catch(() => undefined) : Promise.resolve(),
-    ];
-
-    return Promise.race([
-      Promise.all(tasks),
-      new Promise((resolve) => window.setTimeout(resolve, 8000)),
-    ]);
-  };
-
-  if (document.readyState === "complete") {
-    waitForMedia().then(finish);
-    return;
-  }
-
-  window.addEventListener(
-    "load",
-    () => {
-      waitForMedia().then(finish);
-    },
-    { once: true }
-  );
-})();
-</script></body></html>
+</body></html>
