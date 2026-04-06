@@ -1,0 +1,161 @@
+:root {
+  --nura-serif: "Prata", "Times New Roman", serif;
+  --nura-sans: "Manrope", "Segoe UI", sans-serif;
+  --nura-ink: #211510;
+  --nura-cream: #f4ecdf;
+  --nura-gold: #c89a62;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea,
+p,
+li,
+a,
+span,
+div {
+  font-family: var(--nura-sans) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.u-heading-style-display1,
+.u-heading-style-display2,
+.u-heading-style-h1,
+.u-heading-style-h2,
+.u-heading-style-h3,
+.u-heading-style-h4,
+.u-heading-style-h5,
+.u-heading-style-h6,
+.u-subheadline-1,
+.nura-wordmark {
+  font-family: var(--nura-serif) !important;
+  letter-spacing: -0.02em;
+}
+
+.nav_logo_row,
+.footer_bottom_title {
+  width: auto !important;
+}
+
+.nav_logo_row svg,
+.footer_bottom_title svg {
+  display: none !important;
+}
+
+.footer_top_logo-item {
+  display: none !important;
+}
+
+.nura-wordmark {
+  color: currentColor;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nura-wordmark__sub {
+  display: none !important;
+}
+
+.footer_bottom_title .nura-wordmark__sub {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.btn-bubble-arrow__content-text,
+.u-text-style-main,
+.u-text-style-menu,
+.u-text-style-label2,
+.u-text-style-small,
+.info_pill,
+.blog_summary {
+  font-family: var(--nura-sans) !important;
+}
+
+.hero_subheader,
+.blog_summary,
+.u-rich-text,
+.u-rich-text p,
+.u-rich-text li {
+  letter-spacing: 0.01em;
+}
+
+.u-rich-text a {
+  color: var(--nura-gold);
+}
+
+#nura-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top, rgba(200, 154, 98, 0.18), transparent 36%),
+    linear-gradient(180deg, #090707 0%, #16100d 100%);
+  color: var(--nura-cream);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  animation: nura-loader-exit 0.65s ease 4.8s forwards;
+}
+
+.nura-loading-mark,
+.nura-transition-mark {
+  font-family: var(--nura-serif) !important;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.nura-loading-mark {
+  font-size: clamp(1.6rem, 6vw, 4rem);
+}
+
+.nura-transition-mark {
+  font-size: clamp(2rem, 7vw, 6rem);
+  line-height: 1;
+  color: var(--nura-cream);
+}
+
+.loading_logo_wrap .logo,
+.loading_logo_wrap svg {
+  display: none !important;
+}
+
+.loading_logo_wrap {
+  display: grid !important;
+  place-items: center;
+}
+
+.menu_link .u-text-style-menu {
+  font-size: clamp(2.35rem, 5vw, 4.6rem) !important;
+  line-height: 0.94 !important;
+}
+
+.u-flex-horizontal-wrap {
+  column-gap: 0.7rem !important;
+  row-gap: 0.7rem !important;
+}
+
+.info_pill {
+  margin-right: 0 !important;
+}
+
+@keyframes nura-loader-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
