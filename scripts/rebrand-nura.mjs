@@ -12,13 +12,13 @@ const fontsHref =
 const overrideHref = "/city/assets/nura-media/brand/nura-overrides.css";
 const faviconHref = "/city/assets/nura-media/brand/nura-favicon.svg";
 
-const remoteImages = [
-  "https://images.unsplash.com/photo-1745761320291-9fedcc9cf1c0?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1666633097112-3aa2c11ce34f?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1769515376350-bcff86d49499?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1642165515377-d70233b83b00?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1765341448915-856e14ffa1e6?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1768836180164-070b4c1a8f94?auto=format&fit=crop&w=1600&q=80",
+const nuraImages = [
+  "/city/assets/nura-media/images/hero.webp",
+  "/city/assets/nura-media/images/terrace.webp",
+  "/city/assets/nura-media/images/dinner.webp",
+  "/city/assets/nura-media/images/dessert.webp",
+  "/city/assets/nura-media/images/wine.webp",
+  "/city/assets/nura-media/images/room.webp",
 ];
 
 const localVideos = [
@@ -434,7 +434,7 @@ function ensureHeadLink($, selector, html) {
   }
 }
 
-function setMeta($, title, description, image = remoteImages[0]) {
+function setMeta($, title, description, image = nuraImages[0]) {
   $("title").text(title);
   $('meta[name="description"]').attr("content", description);
   $('meta[property="og:title"]').attr("content", title);
@@ -501,9 +501,13 @@ function updateExperiencePrices($) {
   });
 }
 
+function getPageImage(relativePath, offset = 0) {
+  return nuraImages[(relativePath.length + offset) % nuraImages.length];
+}
+
 function replaceVideosWithImages($, relativePath) {
   $("video").each((index, el) => {
-    const replacementSrc = remoteImages[(index + relativePath.length) % remoteImages.length];
+    const replacementSrc = getPageImage(relativePath, index);
     const img = $("<img>");
 
     Object.entries(el.attribs || {}).forEach(([key, value]) => {
@@ -530,6 +534,46 @@ function replaceVideosWithImages($, relativePath) {
     img.attr("class", [...finalClasses].join(" "));
 
     $(el).replaceWith(img);
+  });
+}
+
+function optimizeImages($, relativePath) {
+  const seen = new Set();
+  const rasterImages = $("img")
+    .toArray()
+    .filter((el) => {
+      const src = $(el).attr("src") || "";
+      return !/^data:image\/svg/i.test(src) && !/\.svg(?:[?#].*)?$/i.test(src);
+    });
+
+  rasterImages.forEach((el, index) => {
+    const $img = $(el);
+    const src = getPageImage(relativePath, index);
+
+    $img.attr("src", src);
+
+    $img.removeAttr("srcset");
+    $img.removeAttr("sizes");
+    $img.attr("decoding", "async");
+
+    if (index < 3) {
+      $img.attr("loading", "eager");
+      $img.attr("fetchpriority", index === 0 ? "high" : "auto");
+    } else {
+      $img.attr("loading", "lazy");
+      $img.removeAttr("fetchpriority");
+    }
+
+    if (!seen.has(src)) {
+      seen.add(src);
+      if (seen.size <= 2) {
+        ensureHeadLink(
+          $,
+          `link[data-nura-preload="${seen.size}"]`,
+          `<link rel="preload" as="image" href="${src}" data-nura-preload="${seen.size}">`
+        );
+      }
+    }
   });
 }
 
@@ -626,7 +670,7 @@ function applyHomePage($) {
     $,
     `${brandName} | Авторская кухня, коктейли и гастроужины`,
     "NŪRA Restaurant — авторская кухня, коктейли, винные ужины и камерные гастрономические форматы в современном ресторанном пространстве.",
-    remoteImages[0]
+    nuraImages[0]
   );
 
   $(".hero_wrapper h1").first().text(brandName);
@@ -667,7 +711,7 @@ function applyExperienceIndex($) {
     $,
     `${brandName} | Форматы и гастрономические вечера`,
     "Откройте форматы NŪRA Restaurant: шефский стол, поздний бранч, винный ужин, коктейли на террасе и приватные вечера.",
-    remoteImages[1]
+    nuraImages[1]
   );
 
   $("h1").first().text("Форматы");
@@ -690,7 +734,7 @@ function applyExperienceDetail($, config) {
     $,
     `${config.title} | ${brandName}`,
     config.metaDescription,
-    remoteImages[2]
+    nuraImages[2]
   );
 
   $("h1").first().text(config.title);
@@ -730,13 +774,13 @@ function applyBlogIndex($) {
     $,
     `${brandName} | Журнал`,
     "Журнал NŪRA Restaurant: заметки о сервисе, шефском столе, баре, дегустационных сетах и ритме современного ресторана.",
-    remoteImages[3]
+    nuraImages[3]
   );
   $("h1").first().text("Журнал");
 }
 
 function applyBlogDetail($, config) {
-  setMeta($, `${config.title} | ${brandName}`, config.metaDescription, remoteImages[4]);
+  setMeta($, `${config.title} | ${brandName}`, config.metaDescription, nuraImages[4]);
   $("h1").first().text(config.title);
   $(".blog_summary").first().text(config.summary);
   $(".u-rich-text").first().html(config.body);
@@ -767,7 +811,7 @@ function collectMatches(content, regex) {
 
 const htmlFiles = await walkHtmlFiles(repoRoot);
 const imageRegex =
-  /(?:https:\/\/cdn\.prod\.website-files\.com|\/city\/assets\/cdn\.prod\.website-files\.com|\/assets\/cdn\.prod\.website-files\.com)[^"'`\s)]+?\.(?:avif|png|jpe?g|webp)(?:\?[^"'`\s)]*)?/g;
+  /https:\/\/images\.unsplash\.com\/[^"'`\s)]+|(?:https:\/\/cdn\.prod\.website-files\.com|\/city\/assets\/cdn\.prod\.website-files\.com|\/assets\/cdn\.prod\.website-files\.com)[^"'`\s)]+?\.(?:avif|png|jpe?g|webp)(?:\?[^"'`\s)]*)?/g;
 const videoRegex =
   /(?:https:\/\/cdn\.prod\.website-files\.com|\/city\/assets\/cdn\.prod\.website-files\.com|\/assets\/cdn\.prod\.website-files\.com)[^"'`\s)]+?\.mp4(?:\?[^"'`\s)]*)?/g;
 
@@ -782,7 +826,7 @@ for (const file of htmlFiles) {
   allVideos.push(...collectMatches(content, videoRegex));
 }
 
-const imageMap = buildAssetMap(allImages, remoteImages);
+const imageMap = buildAssetMap(allImages, nuraImages);
 const videoMap = buildAssetMap(allVideos, localVideos);
 
 for (const file of htmlFiles) {
@@ -805,12 +849,7 @@ for (const file of htmlFiles) {
     applyBlogDetail($, blogPages[relativePath]);
   }
 
-  $("img").each((index, el) => {
-    const src = $(el).attr("src");
-    if (!src) {
-      $(el).attr("src", remoteImages[index % remoteImages.length]);
-    }
-  });
+  optimizeImages($, relativePath);
 
   let html = $.html();
   html = replaceInString(html, [
